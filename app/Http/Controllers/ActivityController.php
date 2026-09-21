@@ -10,19 +10,26 @@ use DomainException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 class ActivityController extends Controller
 {
     /**
      * Menampilkan daftar seluruh kegiatan.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
+        $status = $request->query('status');
+        $validStatuses = ['Planned', 'Ongoing', 'Done'];
+
         $activities = Activity::query()
+            ->when(in_array($status, $validStatuses, true), function ($query) use ($status) {
+                $query->where('status', $status);
+            })
             ->orderBy('activity_date')
             ->get();
 
-        return view('activities.index', compact('activities'));
+        return view('activities.index', compact('activities', 'status'));
     }
 
     /**

@@ -12,6 +12,20 @@
         </div>
     @endif
 
+    {{-- Form Filter Status via Query String --}}
+    <form method="GET" action="{{ route('activities.index') }}" style="margin-bottom: 1.5rem; display: flex; gap: 0.75rem; align-items: center; background: #f9fafb; padding: 0.75rem 1rem; border-radius: 6px; border: 1px solid #e5e7eb;">
+        <label for="status-filter" style="font-weight: 600; font-size: 0.875rem; color: #374151;">Filter Status:</label>
+        <select name="status" id="status-filter" onchange="this.form.submit()" style="padding: 0.4rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
+            <option value="" {{ empty($status) ? 'selected' : '' }}>Semua</option>
+            <option value="Planned" {{ $status === 'Planned' ? 'selected' : '' }}>Planned</option>
+            <option value="Ongoing" {{ $status === 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
+            <option value="Done" {{ $status === 'Done' ? 'selected' : '' }}>Done</option>
+        </select>
+        @if(!empty($status))
+            <a href="{{ route('activities.index') }}" style="color: #ef4444; font-size: 0.875rem; text-decoration: none; font-weight: 500;">&times; Reset Filter</a>
+        @endif
+    </form>
+
     <div style="display: grid; gap: 1rem;">
         @forelse ($activities as $activity)
             <article style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.25rem;">
@@ -32,7 +46,7 @@
                 </div>
             </article>
         @empty
-            <p style="color: #6b7280;">Belum ada kegiatan yang tersimpan.</p>
+            <p style="color: #6b7280;">Belum ada kegiatan yang cocok dengan kriteria filter.</p>
         @endforelse
     </div>
 @endsection

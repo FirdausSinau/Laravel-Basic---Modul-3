@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
         $table->string('title', 100);
         $table->text('description')->nullable();
-        $table->date('activity_date');
+        $table->date('activity_date')->nullable();
         $table->string('category', 50);
         $table->string('status', 20)->default('Planned');
         $table->timestamps();

@@ -8,9 +8,9 @@ use App\Models\Activity;
 use App\Services\ActivityService;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Illuminate\Http\Request;
 
 class ActivityController extends Controller
 {
@@ -20,12 +20,9 @@ class ActivityController extends Controller
     public function index(Request $request): View
     {
         $status = $request->query('status');
-        $validStatuses = ['Planned', 'Ongoing', 'Done'];
 
         $activities = Activity::query()
-            ->when(in_array($status, $validStatuses, true), function ($query) use ($status) {
-                $query->where('status', $status);
-            })
+            ->filterStatus($status)
             ->orderBy('activity_date')
             ->get();
 

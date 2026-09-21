@@ -16,4 +16,12 @@ class Activity extends Model
         'activity_date',
         'status',
     ];
+
+    public function scopeFilterStatus($query, ?string $status)
+    {
+        return $query->when(
+            in_array($status, ['Planned', 'Ongoing', 'Done'], true),
+            fn ($q) => $q->where('status', $status)
+        );
+    }
 }

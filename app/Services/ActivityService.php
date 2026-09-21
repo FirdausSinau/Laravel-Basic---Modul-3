@@ -27,10 +27,10 @@ class ActivityService
         $allowed = [
             'Planned' => ['Planned', 'Ongoing'],
             'Ongoing' => ['Ongoing', 'Done'],
-            'Done'    => ['Done'],
+            'Done' => ['Done'],
         ];
 
-        if (!in_array($next, $allowed[$current] ?? [], true)) {
+        if (! in_array($next, $allowed[$current] ?? [], true)) {
             throw new DomainException("Transisi status dari {$current} ke {$next} tidak diperbolehkan.");
         }
     }

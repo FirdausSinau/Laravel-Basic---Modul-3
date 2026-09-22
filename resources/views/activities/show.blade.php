@@ -20,7 +20,7 @@
         </div>
 
         <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1.5rem;">
-            Tanggal: {{ is_string($activity->activity_date) ? $activity->activity_date : $activity->activity_date->format('d M Y') }}
+            Tanggal: {{ $activity->activity_date->format('d M Y') }}
             @if ($activity->category)
                 | Kategori: <strong>{{ $activity->category }}</strong>
             @endif

@@ -17,6 +17,19 @@ class Activity extends Model
         'status',
     ];
 
+    /**
+     * Cast atribut model ke tipe data asli.
+     */
+    protected function casts(): array
+    {
+        return [
+            'activity_date' => 'date',
+        ];
+    }
+
+    /**
+     * Scope kueri untuk memfilter kegiatan berdasarkan status yang valid.
+     */
     public function scopeFilterStatus($query, ?string $status)
     {
         return $query->when(

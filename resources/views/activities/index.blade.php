@@ -35,7 +35,7 @@
                     </a>
                 </h3>
                 <p style="margin: 0 0 0.5rem 0; color: #6b7280; font-size: 0.875rem;">
-                    {{ is_string($activity->activity_date) ? $activity->activity_date : $activity->activity_date->format('d M Y') }}
+                    {{ $activity->activity_date->format('d M Y') }}
                     @if($activity->category)
                         | <span style="background: #f3f4f6; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 500;">{{ $activity->category }}</span>
                     @endif

@@ -20,9 +20,12 @@
         </div>
 
         <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            @if ($activity->code)
+                Kode: <strong>{{ $activity->code }}</strong> | 
+            @endif
             Tanggal: {{ $activity->activity_date->format('d M Y') }}
             @if ($activity->category)
-                | Kategori: <strong>{{ $activity->category }}</strong>
+                | Kategori: <strong>{{ $activity->category->name }}</strong>
             @endif
         </p>
 

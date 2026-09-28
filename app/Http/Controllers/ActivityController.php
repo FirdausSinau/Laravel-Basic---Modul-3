@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
+use App\Models\Category;
 use App\Services\ActivityService;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
@@ -34,7 +35,9 @@ class ActivityController extends Controller
      */
     public function create(): View
     {
-        return view('activities.create');
+        $categories = $this->categories();
+
+        return view('activities.create', compact('categories'));
     }
 
     /**
@@ -62,7 +65,9 @@ class ActivityController extends Controller
      */
     public function edit(Activity $activity): View
     {
-        return view('activities.edit', compact('activity'));
+        $categories = $this->categories();
+
+        return view('activities.edit', compact('activity', 'categories'));
     }
 
     /**
@@ -96,5 +101,13 @@ class ActivityController extends Controller
         return redirect()
             ->route('activities.index')
             ->with('success', 'Kegiatan berhasil dihapus.');
+    }
+
+    /**
+     * Helper method terpusat untuk mengambil daftar kategori.
+     */
+    private function categories()
+    {
+        return Category::orderBy('name')->get();
     }
 }

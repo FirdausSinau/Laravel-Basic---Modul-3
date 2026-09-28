@@ -1,3 +1,28 @@
+{{-- Input Kode Kegiatan (Syarat Unik Task 1) --}}
+<div style="margin-bottom: 1rem;">
+    <label for="code" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Kode Kegiatan *</label>
+    <input type="text" name="code" id="code" value="{{ old('code', $activity->code ?? '') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;" required>
+    @error('code')
+        <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
+    @enderror
+</div>
+
+{{-- Dropdown Kategori (Syarat Relasi Task 1) --}}
+<div style="margin-bottom: 1rem;">
+    <label for="category_id" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Kategori *</label>
+    <select name="category_id" id="category_id" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;" required>
+        <option value="">-- Pilih Kategori --</option>
+        @foreach ($categories as $category)
+            <option value="{{ $category->id }}" {{ old('category_id', $activity->category_id ?? '') == $category->id ? 'selected' : '' }}>
+                {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+    @error('category_id')
+        <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
+    @enderror
+</div>
+
 <div style="margin-bottom: 1rem;">
     <label for="title" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Judul Kegiatan (5–100 karakter) *</label>
     <input type="text" name="title" id="title" value="{{ old('title', $activity->title ?? '') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;" required>
@@ -22,14 +47,6 @@
         <option value="Done" {{ old('status', $activity->status ?? '') === 'Done' ? 'selected' : '' }}>Done</option>
     </select>
     @error('status')
-        <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
-    @enderror
-</div>
-
-<div style="margin-bottom: 1rem;">
-    <label for="category" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Kategori</label>
-    <input type="text" name="category" id="category" value="{{ old('category', $activity->category ?? '') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;">
-    @error('category')
         <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
     @enderror
 </div>

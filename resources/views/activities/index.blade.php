@@ -35,9 +35,14 @@
                     </a>
                 </h3>
                 <p style="margin: 0 0 0.5rem 0; color: #6b7280; font-size: 0.875rem;">
+                    @if($activity->code)
+                        <span style="font-family: monospace; font-weight: 600; color: #1e293b;">[{{ $activity->code }}]</span> | 
+                    @endif
                     {{ $activity->activity_date->format('d M Y') }}
                     @if($activity->category)
-                        | <span style="background: #f3f4f6; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 500;">{{ $activity->category }}</span>
+                        | <span style="background: #f3f4f6; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 500;">
+                            {{ $activity->category->name }}
+                          </span>
                     @endif
                 </p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">

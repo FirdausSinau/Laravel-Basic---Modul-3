@@ -33,20 +33,8 @@
 
 <div style="margin-bottom: 1rem;">
     <label for="activity_date" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Tanggal Pelaksanaan *</label>
-    <input type="date" name="activity_date" id="activity_date" value="{{ old('activity_date', isset($activity->activity_date) ? $activity->activity_date->format('Y-m-d') : '') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;" required>
+    <input type="date" name="activity_date" id="activity_date" value="{{ old('activity_date', isset($activity->activity_date) ? (is_string($activity->activity_date) ? substr($activity->activity_date, 0, 10) : $activity->activity_date->format('Y-m-d')) : '') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;" required>
     @error('activity_date')
-        <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
-    @enderror
-</div>
-
-<div style="margin-bottom: 1rem;">
-    <label for="status" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Status *</label>
-    <select name="status" id="status" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;" required>
-        <option value="Planned" {{ old('status', $activity->status ?? 'Planned') === 'Planned' ? 'selected' : '' }}>Planned</option>
-        <option value="Ongoing" {{ old('status', $activity->status ?? '') === 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
-        <option value="Done" {{ old('status', $activity->status ?? '') === 'Done' ? 'selected' : '' }}>Done</option>
-    </select>
-    @error('status')
         <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
     @enderror
 </div>
@@ -57,4 +45,40 @@
     @error('description')
         <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
     @enderror
+</div>
+
+{{-- Lokasi Kegiatan --}}
+<div style="margin-bottom: 1rem;">
+    <label for="location" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Lokasi</label>
+    <input type="text" name="location" id="location" value="{{ old('location', $activity->location ?? '') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;">
+    @error('location')
+        <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
+    @enderror
+</div>
+
+{{-- Kapasitas (1 - 500) --}}
+<div style="margin-bottom: 1rem;">
+    <label for="capacity" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Kapasitas Peserta (1 - 500)</label>
+    <input type="number" name="capacity" id="capacity" min="1" max="500" value="{{ old('capacity', $activity->capacity ?? '') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;">
+    @error('capacity')
+        <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
+    @enderror
+</div>
+
+{{-- Waktu Mulai & Selesai --}}
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+    <div>
+        <label for="start_at" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Waktu Mulai</label>
+        <input type="datetime-local" name="start_at" id="start_at" value="{{ old('start_at', isset($activity->start_at) ? (is_string($activity->start_at) ? date('Y-m-d\TH:i', strtotime($activity->start_at)) : $activity->start_at->format('Y-m-d\TH:i')) : '') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;">
+        @error('start_at')
+            <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
+        @enderror
+    </div>
+    <div>
+        <label for="end_at" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Waktu Selesai</label>
+        <input type="datetime-local" name="end_at" id="end_at" value="{{ old('end_at', isset($activity->end_at) ? (is_string($activity->end_at) ? date('Y-m-d\TH:i', strtotime($activity->end_at)) : $activity->end_at->format('Y-m-d\TH:i')) : '') }}" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;">
+        @error('end_at')
+            <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
+        @enderror
+    </div>
 </div>

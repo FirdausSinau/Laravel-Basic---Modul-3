@@ -20,14 +20,16 @@ class ActivityController extends Controller
      */
     public function index(Request $request): View
     {
-        $status = $request->query('status');
+        $filters = $request->only(['search', 'category_id', 'status', 'sort']);
 
         $activities = Activity::query()
-            ->filterStatus($status)
-            ->orderBy('activity_date')
-            ->get();
+            ->filter($filters)
+            ->paginate(5) // Batasi 5 per halaman agar pagination mudah diuji
+            ->withQueryString();
 
-        return view('activities.index', compact('activities', 'status'));
+        $categories = $this->categories();
+
+        return view('activities.index', compact('activities', 'categories', 'filters'));
     }
 
     /**
@@ -109,5 +111,25 @@ class ActivityController extends Controller
     private function categories()
     {
         return Category::orderBy('name')->get();
+    }
+
+    public function publish(Activity $activity, ActivityService $service): RedirectResponse
+    {
+        try {
+            $service->publish($activity);
+            return back()->with('success', 'Kegiatan berhasil dipublikasikan.');
+        } catch (DomainException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function complete(Activity $activity, ActivityService $service): RedirectResponse
+    {
+        try {
+            $service->complete($activity);
+            return back()->with('success', 'Kegiatan berhasil diselesaikan.');
+        } catch (DomainException $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

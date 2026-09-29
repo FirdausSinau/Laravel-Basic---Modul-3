@@ -13,15 +13,40 @@
     @endif
 
     {{-- Form Filter Status via Query String --}}
-    <form method="GET" action="{{ route('activities.index') }}" style="margin-bottom: 1.5rem; display: flex; gap: 0.75rem; align-items: center; background: #f9fafb; padding: 0.75rem 1rem; border-radius: 6px; border: 1px solid #e5e7eb;">
-        <label for="status-filter" style="font-weight: 600; font-size: 0.875rem; color: #374151;">Filter Status:</label>
-        <select name="status" id="status-filter" onchange="this.form.submit()" style="padding: 0.4rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
-            <option value="" {{ empty($status) ? 'selected' : '' }}>Semua</option>
-            <option value="Planned" {{ $status === 'Planned' ? 'selected' : '' }}>Planned</option>
-            <option value="Ongoing" {{ $status === 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
-            <option value="Done" {{ $status === 'Done' ? 'selected' : '' }}>Done</option>
+    <form method="GET" action="{{ route('activities.index') }}" style="margin-bottom: 1.5rem; background: #f9fafb; padding: 1rem; border-radius: 8px; border: 1px solid #e5e7eb; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+        
+        <!-- Search code / title -->
+        <input type="text" name="search" placeholder="Cari kode atau judul..." value="{{ $filters['search'] ?? '' }}" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem; min-width: 180px;">
+
+        <!-- Filter Kategori -->
+        <select name="category_id" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
+            <option value="">Semua Kategori</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}" {{ ($filters['category_id'] ?? '') == $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
+            @endforeach
         </select>
-        @if(!empty($status))
+
+        <!-- Filter Status -->
+        <select name="status" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
+            <option value="">Semua Status</option>
+            <option value="Draft" {{ ($filters['status'] ?? '') === 'Draft' ? 'selected' : '' }}>Draft</option>
+            <option value="Published" {{ ($filters['status'] ?? '') === 'Published' ? 'selected' : '' }}>Published</option>
+            <option value="Completed" {{ ($filters['status'] ?? '') === 'Completed' ? 'selected' : '' }}>Completed</option>
+        </select>
+
+        <!-- Sort Tanggal -->
+        <select name="sort" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
+            <option value="latest" {{ ($filters['sort'] ?? '') === 'latest' ? 'selected' : '' }}>Terbaru</option>
+            <option value="oldest" {{ ($filters['sort'] ?? '') === 'oldest' ? 'selected' : '' }}>Terlama</option>
+        </select>
+
+        <button type="submit" style="background: #2563eb; color: white; padding: 0.45rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.875rem; font-weight: 600;">
+            Terapkan
+        </button>
+
+        @if(!empty(array_filter($filters)))
             <a href="{{ route('activities.index') }}" style="color: #ef4444; font-size: 0.875rem; text-decoration: none; font-weight: 500;">&times; Reset Filter</a>
         @endif
     </form>
@@ -53,5 +78,28 @@
         @empty
             <p style="color: #6b7280;">Belum ada kegiatan yang cocok dengan kriteria filter.</p>
         @endforelse
+    </div>
+    {{-- Pagination Links --}}
+    <div style="margin-top: 1.5rem;">
+        <style>
+            nav[role="navigation"] svg {
+                width: 1.25rem !important;
+                height: 1.25rem !important;
+                display: inline-block;
+                vertical-align: middle;
+            }
+            nav[role="navigation"] > div:first-child {
+                display: none; /* Sembunyikan duplikasi teks navigasi bawaan mobile */
+            }
+            nav[role="navigation"] > div:last-child {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        </style>
+
+        {{ $activities->links() }}
     </div>
 @endsection

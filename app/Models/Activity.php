@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Activity extends Model
@@ -20,6 +20,10 @@ class Activity extends Model
         'description',
         'activity_date',
         'status',
+        'location',
+        'capacity',
+        'start_at',
+        'end_at',
     ];
 
     /**
@@ -29,54 +33,53 @@ class Activity extends Model
     {
         return [
             'activity_date' => 'date',
+            'start_at' => 'datetime',
+            'end_at' => 'datetime',
         ];
     }
 
     /**
-     * Scope kueri untuk memfilter kegiatan berdasarkan status yang valid.
+     * Relasi ke Category (Task 1).
      */
-    public function scopeFilterStatus($query, ?string $status)
-    {
-        return $query->when(
-            in_array($status, ['Planned', 'Ongoing', 'Done'], true),
-            fn ($q) => $q->where('status', $status)
-        );
-    }
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * Scope terpadu untuk Search (code/title), Filter Kategori & Status, serta Sort (Task 2).
+     */
     public function scopeFilter(Builder $query, array $filters): Builder
     {
-    // 1. Pencarian teks pada kolom title
-    $query->when($filters['search'] ?? null, function ($query, $search) {
-        $query->where('title', 'like', '%' . $search . '%');
-    });
+        // 1. Search code atau title
+        $query->when($filters['search'] ?? null, function ($q, $search) {
+            $q->where(function ($sub) use ($search) {
+                $sub->where('code', 'like', "%{$search}%")
+                    ->orWhere('title', 'like', "%{$search}%");
+            });
+        });
 
-    // 2. Filter berdasarkan category_id
-    $query->when($filters['category_id'] ?? null, function ($query, $categoryId) {
-        $query->where('category_id', $categoryId);
-    });
+        // 2. Filter Kategori
+        $query->when($filters['category_id'] ?? null, function ($q, $categoryId) {
+            $q->where('category_id', $categoryId);
+        });
 
-    // 3. Filter berdasarkan status
-    $query->when($filters['status'] ?? null, function ($query, $status) {
-        $query->where('status', $status);
-    });
+        // 3. Filter Status
+        $query->when($filters['status'] ?? null, function ($q, $status) {
+            $q->where('status', $status);
+        });
 
-    // 4. Pengurutan data (sort)
-    $query->when($filters['sort'] ?? null, function ($query, $sort) {
-        if ($sort === 'oldest') {
-            $query->orderBy('created_at', 'asc');
-        } else {
-            $query->orderBy('created_at', 'desc');
-        }
-    }, function ($query) {
-        // Default sort jika parameter kosong
-        $query->orderBy('created_at', 'desc');
-    });
+        // 4. Sort Tanggal (Terbaru / Terlama)
+        $query->when($filters['sort'] ?? null, function ($q, $sort) {
+            if ($sort === 'oldest') {
+                $q->orderBy('activity_date', 'asc');
+            } else {
+                $q->orderBy('activity_date', 'desc');
+            }
+        }, function ($q) {
+            $q->orderBy('activity_date', 'desc');
+        });
 
-    return $query;
-}
+        return $query;
+    }
 }

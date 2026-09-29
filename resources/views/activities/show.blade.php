@@ -11,6 +11,12 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div style="background: #fee2e2; border-left: 4px solid #ef4444; color: #991b1b; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <article style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; max-width: 700px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
             <h2 style="margin: 0;">{{ $activity->title }}</h2>
@@ -19,15 +25,23 @@
             </span>
         </div>
 
-        <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1.5rem;">
+        <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem;">
             @if ($activity->code)
                 Kode: <strong>{{ $activity->code }}</strong> | 
             @endif
-            Tanggal: {{ $activity->activity_date->format('d M Y') }}
+            Tanggal: {{ $activity->activity_date ? (is_string($activity->activity_date) ? substr($activity->activity_date, 0, 10) : $activity->activity_date->format('d M Y')) : '-' }}
             @if ($activity->category)
                 | Kategori: <strong>{{ $activity->category->name }}</strong>
             @endif
         </p>
+
+        {{-- Detail Informasi Task 2 (Lokasi, Kapasitas, & Jadwal Waktu) --}}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.85rem 1rem; margin-bottom: 1.5rem; font-size: 0.875rem; color: #334155; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem;">
+            <div><strong>Lokasi:</strong> {{ $activity->location ?: '-' }}</div>
+            <div><strong>Kapasitas:</strong> {{ $activity->capacity ? $activity->capacity . ' orang' : '-' }}</div>
+            <div><strong>Mulai:</strong> {{ $activity->start_at ? (is_string($activity->start_at) ? $activity->start_at : $activity->start_at->format('d M Y H:i')) : '-' }}</div>
+            <div><strong>Selesai:</strong> {{ $activity->end_at ? (is_string($activity->end_at) ? $activity->end_at : $activity->end_at->format('d M Y H:i')) : '-' }}</div>
+        </div>
 
         <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-bottom: 2rem;">
             <h4 style="margin: 0 0 0.5rem 0; color: #374151;">Deskripsi:</h4>
@@ -36,7 +50,26 @@
             </p>
         </div>
 
-        <div style="display: flex; gap: 0.75rem; border-top: 1px solid #f3f4f6; padding-top: 1.25rem;">
+        {{-- Tombol Aksi & Transisi Status --}}
+        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; border-top: 1px solid #f3f4f6; padding-top: 1.25rem;">
+            @if ($activity->status === 'Draft')
+                <form action="{{ route('activities.publish', $activity) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" style="background: #16a34a; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                        Publikasikan Kegiatan
+                    </button>
+                </form>
+            @elseif ($activity->status === 'Published')
+                <form action="{{ route('activities.complete', $activity) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" style="background: #2563eb; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                        Selesaikan Kegiatan
+                    </button>
+                </form>
+            @endif
+
             <a href="{{ route('activities.edit', $activity) }}" style="background: #f59e0b; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-weight: 600;">
                 Ubah Kegiatan
             </a>

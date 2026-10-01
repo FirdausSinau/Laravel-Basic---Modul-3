@@ -82,3 +82,20 @@
         @enderror
     </div>
 </div>
+
+{{-- Poster Kegiatan (Add-On) --}}
+<div style="margin-bottom: 1rem;">
+    <label for="poster" style="display: block; font-weight: 600; margin-bottom: 0.25rem;">Poster Kegiatan (opsional, maks. 2 MB)</label>
+
+    @if (!empty($activity->poster_path))
+        <div style="margin-bottom: 0.5rem;">
+            <img src="{{ Storage::disk('public')->url($activity->poster_path) }}" alt="Poster {{ $activity->title }}" style="max-width: 200px; border-radius: 6px; border: 1px solid #e5e7eb;">
+            <p style="margin: 0.25rem 0 0; font-size: 0.8rem; color: #6b7280;">Poster saat ini. Unggah berkas baru untuk menggantinya.</p>
+        </div>
+    @endif
+
+    <input type="file" name="poster" id="poster" accept="image/*" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box;">
+    @error('poster')
+        <span style="color: #dc2626; font-size: 0.875rem;">{{ $message }}</span>
+    @enderror
+</div>

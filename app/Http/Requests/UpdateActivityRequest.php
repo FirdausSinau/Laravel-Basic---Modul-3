@@ -33,6 +33,9 @@ class UpdateActivityRequest extends FormRequest
             'capacity' => ['nullable', 'integer', 'min:1', 'max:500'],
             'start_at' => ['nullable', 'date'],
             'end_at' => ['nullable', 'date', 'after_or_equal:start_at'],
+
+            // Add-On poster (opsional, maksimal 2 MB)
+            'poster' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

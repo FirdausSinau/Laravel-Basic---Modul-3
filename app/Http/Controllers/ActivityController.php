@@ -102,6 +102,8 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity): RedirectResponse
     {
+        // Soft delete saja. File poster sengaja TIDAK dihapus di sini supaya
+        // restore tetap dapat menampilkan poster (Add-On butir 6).
         $activity->delete();
 
         return redirect()

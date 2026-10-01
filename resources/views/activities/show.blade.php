@@ -25,6 +25,14 @@
             </span>
         </div>
 
+        @if ($activity->poster_path)
+            <div style="margin-bottom: 1.25rem;">
+                <img src="{{ Storage::disk('public')->url($activity->poster_path) }}"
+                     alt="Poster {{ $activity->title }}"
+                     style="max-width: 100%; max-height: 320px; border-radius: 8px; border: 1px solid #e5e7eb;">
+            </div>
+        @endif
+
         <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem;">
             @if ($activity->code)
                 Kode: <strong>{{ $activity->code }}</strong> |

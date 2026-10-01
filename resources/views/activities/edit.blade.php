@@ -17,7 +17,7 @@
         </div>
     @endif
 
-    <form action="{{ route('activities.update', $activity) }}" method="POST" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb; max-width: 600px;">
+    <form action="{{ route('activities.update', $activity) }}" method="POST" enctype="multipart/form-data" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb; max-width: 600px;">
         @csrf
         @method('PUT')
 

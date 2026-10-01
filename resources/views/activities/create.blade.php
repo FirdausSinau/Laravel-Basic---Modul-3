@@ -17,7 +17,7 @@
         </div>
     @endif
 
-    <form action="{{ route('activities.store') }}" method="POST" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb; max-width: 600px;">
+    <form action="{{ route('activities.store') }}" method="POST" enctype="multipart/form-data" style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb; max-width: 600px;">
         @csrf
 
         @include('activities._form')

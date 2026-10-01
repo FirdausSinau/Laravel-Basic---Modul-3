@@ -25,6 +25,7 @@ class Activity extends Model
         'capacity',
         'start_at',
         'end_at',
+        'poster_path',
     ];
 
     /**

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Activity;
 use DomainException;
+use Illuminate\Support\Facades\Storage;
 
 class ActivityService
 {
@@ -11,6 +12,11 @@ class ActivityService
     {
         // Status awal selalu Draft, tidak pernah diambil dari input request.
         $data['status'] = 'Draft';
+
+        if ($poster = $data['poster'] ?? null) {
+            $data['poster_path'] = $poster->store('posters', 'public');
+        }
+        unset($data['poster']);
 
         return Activity::create($data);
     }
@@ -21,7 +27,20 @@ class ActivityService
             $this->ensureValidTransition($activity->status, $data['status']);
         }
 
+        $posterLama = $activity->poster_path;
+
+        if ($poster = $data['poster'] ?? null) {
+            $data['poster_path'] = $poster->store('posters', 'public');
+        }
+        unset($data['poster']);
+
         $activity->update($data);
+
+        // File lama baru dihapus setelah file baru berhasil tersimpan,
+        // supaya kegagalan penyimpanan tidak menghilangkan poster lama.
+        if (isset($data['poster_path']) && $posterLama) {
+            Storage::disk('public')->delete($posterLama);
+        }
 
         return $activity;
     }

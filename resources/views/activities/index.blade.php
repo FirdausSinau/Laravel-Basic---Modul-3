@@ -3,7 +3,11 @@
 @section('content')
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h2 style="margin: 0;">Daftar Kegiatan</h2>
-        <a href="{{ route('activities.create') }}" style="background: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600;">+ Tambah Kegiatan</a>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <a href="{{ route('categories.index') }}" style="background: #0f766e; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Kategori</a>
+            <a href="{{ route('activities.trash') }}" style="background: #6b7280; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Data Terhapus</a>
+            <a href="{{ route('activities.create') }}" style="background: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600;">+ Tambah Kegiatan</a>
+        </div>
     </div>
 
     @if (session('success'))
@@ -14,12 +18,12 @@
 
     {{-- Form Filter Status via Query String --}}
     <form method="GET" action="{{ route('activities.index') }}" style="margin-bottom: 1.5rem; background: #f9fafb; padding: 1rem; border-radius: 8px; border: 1px solid #e5e7eb; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
-        
+
         <!-- Search code / title -->
-        <input type="text" name="search" placeholder="Cari kode atau judul..." value="{{ $filters['search'] ?? '' }}" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem; min-width: 180px;">
+        <input type="text" name="search" id="filter-search" aria-label="Cari kode atau judul kegiatan" placeholder="Cari kode atau judul..." value="{{ $filters['search'] ?? '' }}" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem; min-width: 180px;">
 
         <!-- Filter Kategori -->
-        <select name="category_id" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
+        <select name="category_id" id="filter-category" aria-label="Filter berdasarkan kategori" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
             <option value="">Semua Kategori</option>
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}" {{ ($filters['category_id'] ?? '') == $category->id ? 'selected' : '' }}>
@@ -29,7 +33,7 @@
         </select>
 
         <!-- Filter Status -->
-        <select name="status" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
+        <select name="status" id="filter-status" aria-label="Filter berdasarkan status kegiatan" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
             <option value="">Semua Status</option>
             <option value="Draft" {{ ($filters['status'] ?? '') === 'Draft' ? 'selected' : '' }}>Draft</option>
             <option value="Published" {{ ($filters['status'] ?? '') === 'Published' ? 'selected' : '' }}>Published</option>
@@ -37,7 +41,7 @@
         </select>
 
         <!-- Sort Tanggal -->
-        <select name="sort" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
+        <select name="sort" id="filter-sort" aria-label="Urutkan kegiatan berdasarkan tanggal" style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
             <option value="latest" {{ ($filters['sort'] ?? '') === 'latest' ? 'selected' : '' }}>Terbaru</option>
             <option value="oldest" {{ ($filters['sort'] ?? '') === 'oldest' ? 'selected' : '' }}>Terlama</option>
         </select>
@@ -61,7 +65,7 @@
                 </h3>
                 <p style="margin: 0 0 0.5rem 0; color: #6b7280; font-size: 0.875rem;">
                     @if($activity->code)
-                        <span style="font-family: monospace; font-weight: 600; color: #1e293b;">[{{ $activity->code }}]</span> | 
+                        <span style="font-family: monospace; font-weight: 600; color: #1e293b;">[{{ $activity->code }}]</span> |
                     @endif
                     {{ $activity->activity_date->format('d M Y') }}
                     @if($activity->category)

@@ -23,8 +23,11 @@ class ActivityController extends Controller
         $filters = $request->only(['search', 'category_id', 'status', 'sort']);
 
         $activities = Activity::query()
+            // Eager loading kategori agar view daftar tidak memicu N+1 query.
+            // Tanpa ini: 1 query daftar + 1 query kategori per baris.
+            ->with('category')
             ->filter($filters)
-            ->paginate(5) // Batasi 5 per halaman agar pagination mudah diuji
+            ->paginate(10)
             ->withQueryString();
 
         $categories = $this->categories();
@@ -113,10 +116,45 @@ class ActivityController extends Controller
         return Category::orderBy('name')->get();
     }
 
+    /**
+     * Menampilkan kegiatan yang sudah di-soft delete (Task 3, AC-10).
+     *
+     * Query bawaan Eloquent menyembunyikan record soft delete, sehingga
+     * untuk melihatnya harus diminta secara eksplisit lewat onlyTrashed().
+     */
+    public function trash(): View
+    {
+        $trashedActivities = Activity::onlyTrashed()
+            ->with('category')
+            ->orderByDesc('deleted_at')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('activities.trash', compact('trashedActivities'));
+    }
+
+    /**
+     * Memulihkan kegiatan yang ter-soft delete (Task 3, AC-11).
+     *
+     * Record dicari lewat onlyTrashed() agar kegiatan yang masih aktif
+     * otomatis ditolak oleh findOrFail().
+     */
+    public function restore(int $id): RedirectResponse
+    {
+        $activity = Activity::onlyTrashed()->findOrFail($id);
+
+        $activity->restore();
+
+        return redirect()
+            ->route('activities.trash')
+            ->with('success', 'Kegiatan "'.$activity->title.'" berhasil dipulihkan.');
+    }
+
     public function publish(Activity $activity, ActivityService $service): RedirectResponse
     {
         try {
             $service->publish($activity);
+
             return back()->with('success', 'Kegiatan berhasil dipublikasikan.');
         } catch (DomainException $e) {
             return back()->with('error', $e->getMessage());
@@ -127,6 +165,7 @@ class ActivityController extends Controller
     {
         try {
             $service->complete($activity);
+
             return back()->with('success', 'Kegiatan berhasil diselesaikan.');
         } catch (DomainException $e) {
             return back()->with('error', $e->getMessage());

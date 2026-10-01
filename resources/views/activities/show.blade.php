@@ -27,7 +27,7 @@
 
         <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem;">
             @if ($activity->code)
-                Kode: <strong>{{ $activity->code }}</strong> | 
+                Kode: <strong>{{ $activity->code }}</strong> |
             @endif
             Tanggal: {{ $activity->activity_date ? (is_string($activity->activity_date) ? substr($activity->activity_date, 0, 10) : $activity->activity_date->format('d M Y')) : '-' }}
             @if ($activity->category)

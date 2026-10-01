@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/activities');
@@ -19,4 +20,5 @@ Route::patch('activities/{id}/restore', [ActivityController::class, 'restore'])
 
 Route::patch('activities/{activity}/publish', [ActivityController::class, 'publish'])->name('activities.publish');
 Route::patch('activities/{activity}/complete', [ActivityController::class, 'complete'])->name('activities.complete');
+Route::post('activities/{activity}/registrations', [RegistrationController::class, 'store'])->name('registrations.store');
 Route::resource('activities', ActivityController::class);

@@ -50,6 +50,42 @@
             </p>
         </div>
 
+        {{-- Form Pendaftaran Peserta (Independent Challenge) --}}
+        <div style="border-top: 1px solid #f3f4f6; padding-top: 1.25rem; margin-bottom: 1.5rem;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #374151;">Pendaftaran Peserta</h4>
+            <p style="margin: 0 0 0.75rem 0; color: #6b7280; font-size: 0.85rem;">
+                Terdaftar: <strong>{{ $registeredCount }}</strong>
+                dari kapasitas <strong>{{ $activity->capacity }}</strong> orang.
+            </p>
+
+            <form action="{{ route('registrations.store', $activity) }}" method="POST" style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: flex-start;">
+                @csrf
+                <div>
+                    <label for="participant_name" style="display: block; font-size: 0.8rem; color: #4b5563; margin-bottom: 0.2rem;">Nama Peserta</label>
+                    <input type="text" name="participant_name" id="participant_name" value="{{ old('participant_name') }}"
+                           style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
+                    @error('participant_name')
+                        <div style="color: #b91c1c; font-size: 0.8rem; margin-top: 0.2rem;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="email" style="display: block; font-size: 0.8rem; color: #4b5563; margin-bottom: 0.2rem;">Email</label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}"
+                           style="padding: 0.45rem 0.75rem; border-radius: 4px; border: 1px solid #d1d5db; font-size: 0.875rem;">
+                    @error('email')
+                        <div style="color: #b91c1c; font-size: 0.8rem; margin-top: 0.2rem;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div style="padding-top: 1.25rem;">
+                    <button type="submit" style="background: #7c3aed; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                        Daftar
+                    </button>
+                </div>
+            </form>
+        </div>
+
         {{-- Tombol Aksi & Transisi Status --}}
         <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; border-top: 1px solid #f3f4f6; padding-top: 1.25rem;">
             @if ($activity->status === 'Draft')

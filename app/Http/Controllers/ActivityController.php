@@ -61,7 +61,9 @@ class ActivityController extends Controller
      */
     public function show(Activity $activity): View
     {
-        return view('activities.show', compact('activity'));
+        $registeredCount = $activity->registrations()->count();
+
+        return view('activities.show', compact('activity', 'registeredCount'));
     }
 
     /**

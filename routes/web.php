@@ -9,12 +9,10 @@ Route::redirect('/', '/activities');
 Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
 Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
-// Route trash harus didaftarkan SEBELUM Route::resource, jika tidak
-// '/activities/trash' akan tertangkap oleh '/activities/{activity}'.
+// Harus sebelum Route::resource agar tidak tertangkap '/activities/{activity}'.
 Route::get('activities/trash', [ActivityController::class, 'trash'])->name('activities.trash');
 
-// Restore memakai ID eksplisit karena record sudah soft delete, sehingga
-// tidak lagi bisa diambil oleh Route Model Binding biasa.
+// Pakai ID karena record soft delete tidak terjangkau Route Model Binding.
 Route::patch('activities/{id}/restore', [ActivityController::class, 'restore'])
     ->whereNumber('id')
     ->name('activities.restore');

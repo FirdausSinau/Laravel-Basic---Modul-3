@@ -8,11 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
- * Pengelolaan kategori (Task 1 - BR-08).
- *
- * Fokus utama modul ini adalah membuktikan delete policy: kategori yang masih
- * dipakai kegiatan tidak dapat dihapus, dan penolakan tersebut dibungkus
- * pesan yang bisa dipahami pengguna, bukan QueryException mentah.
+ * Pengelolaan kategori.
  */
 class CategoryController extends Controller
 {
@@ -30,11 +26,6 @@ class CategoryController extends Controller
 
     /**
      * Menghapus kategori yang tidak lagi dipakai kegiatan.
-     *
-     * Penjagaan dilakukan di dua lapis:
-     * 1. Pemeriksaan di aplikasi memberi umpan balik yang jelas ke pengguna.
-     * 2. Foreign key dengan restrictOnDelete() tetap menjadi penjaga terakhir
-     *    bila pemeriksaan aplikasi terlewati (misalnya jalur request paralel).
      */
     public function destroy(Category $category): RedirectResponse
     {
@@ -50,6 +41,7 @@ class CategoryController extends Controller
         try {
             $category->delete();
         } catch (QueryException) {
+            // Penjaga terakhir bila pemeriksaan di atas terlewati.
             return back()->with(
                 'error',
                 "Kategori \"{$category->name}\" masih digunakan oleh kegiatan dan tidak dapat dihapus."

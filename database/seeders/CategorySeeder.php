@@ -6,18 +6,12 @@ use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 /**
- * Mengisi tabel categories sebagai fixture untuk Special Challenge Modul 3.
- *
- * Dijalankan sebelum ActivitySeeder karena setiap kegiatan wajib
- * menunjuk satu kategori yang tersedia (BR-01).
+ * Mengisi tabel categories.
  */
 class CategorySeeder extends Seeder
 {
     /**
      * Seed data kategori kegiatan.
-     *
-     * Menggunakan updateOrCreate agar seeder idempoten: menjalankan
-     * `php artisan db:seed` berulang tidak menghasilkan duplikat slug.
      */
     public function run(): void
     {

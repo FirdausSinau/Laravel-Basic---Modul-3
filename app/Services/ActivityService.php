@@ -9,9 +9,7 @@ class ActivityService
 {
     public function create(array $data): Activity
     {
-        // Status awal selalu Draft (modul 5.2 butir 1). Status tidak pernah
-        // diambil dari input request; publish dan complete hanya lewat method
-        // tersendiri agar transisi status tetap dikendalikan service.
+        // Status awal selalu Draft, tidak pernah diambil dari input request.
         $data['status'] = 'Draft';
 
         return Activity::create($data);
@@ -29,10 +27,7 @@ class ActivityService
     }
 
     /**
-     * Matriks transisi status yang diizinkan (BR-06 dan BR-07).
-     *
-     * Hanya satu arah: Draft -> Published -> Completed.
-     * Completed tidak dapat kembali menjadi Draft maupun Published.
+     * Memeriksa apakah transisi status diizinkan (BR-06, BR-07).
      */
     private function ensureValidTransition(string $current, string $next): void
     {

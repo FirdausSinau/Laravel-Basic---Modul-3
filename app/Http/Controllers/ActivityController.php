@@ -23,8 +23,7 @@ class ActivityController extends Controller
         $filters = $request->only(['search', 'category_id', 'status', 'sort']);
 
         $activities = Activity::query()
-            // Eager loading kategori agar view daftar tidak memicu N+1 query.
-            // Tanpa ini: 1 query daftar + 1 query kategori per baris.
+            // Mencegah N+1 pada view daftar.
             ->with('category')
             ->filter($filters)
             ->paginate(10)
@@ -117,10 +116,7 @@ class ActivityController extends Controller
     }
 
     /**
-     * Menampilkan kegiatan yang sudah di-soft delete (Task 3, AC-10).
-     *
-     * Query bawaan Eloquent menyembunyikan record soft delete, sehingga
-     * untuk melihatnya harus diminta secara eksplisit lewat onlyTrashed().
+     * Menampilkan kegiatan yang sudah di-soft delete.
      */
     public function trash(): View
     {
@@ -134,13 +130,11 @@ class ActivityController extends Controller
     }
 
     /**
-     * Memulihkan kegiatan yang ter-soft delete (Task 3, AC-11).
-     *
-     * Record dicari lewat onlyTrashed() agar kegiatan yang masih aktif
-     * otomatis ditolak oleh findOrFail().
+     * Memulihkan kegiatan yang ter-soft delete.
      */
     public function restore(int $id): RedirectResponse
     {
+        // onlyTrashed() agar kegiatan yang masih aktif otomatis ditolak.
         $activity = Activity::onlyTrashed()->findOrFail($id);
 
         $activity->restore();

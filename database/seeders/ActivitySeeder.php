@@ -7,13 +7,7 @@ use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 /**
- * Mengisi tabel activities sebagai fixture Special Challenge Modul 3.
- *
- * Seluruh kegiatan dibuat lewat model Activity (bukan query insert mentah)
- * supaya aturan $fillable dan casting activity_date ikut berlaku.
- *
- * Requirement modul 4.3: minimal 15 kegiatan dari dua kategori
- * dan minimal dua status.
+ * Mengisi tabel activities.
  */
 class ActivitySeeder extends Seeder
 {
@@ -22,16 +16,13 @@ class ActivitySeeder extends Seeder
      */
     public function run(): void
     {
-        // Resolve id kategori berdasarkan slug, bukan angka hardcode,
-        // supaya seeder tidak bergantung pada urutan auto increment.
+        // Ambil id kategori berdasarkan slug, bukan angka hardcode.
         $categoryId = Category::pluck('id', 'slug');
 
         $activities = [
-            // -------------------------------------------------------------
-            // DRAFT - belum tersedia bagi peserta.
-            // -------------------------------------------------------------
+            // ---------- DRAFT ----------
 
-            // Draft LENGKAP: fixture skenario "Draft lengkap -> Published" (AC-04).
+            // Draft lengkap, bisa dipublikasikan.
             [
                 'code' => 'ACT-001',
                 'category_id' => $categoryId['workshop'],
@@ -45,9 +36,7 @@ class ActivitySeeder extends Seeder
                 'end_at' => '2026-10-05 12:00:00',
             ],
 
-            // Draft TIDAK LENGKAP (location kosong).
-            // Fixture skenario "Draft tidak lengkap -> Published" yang harus
-            // DITOLAK oleh guard BR-05 di ActivityService::publish().
+            // Draft tanpa location, publish harus ditolak.
             [
                 'code' => 'ACT-006',
                 'category_id' => $categoryId['seminar'],
@@ -113,13 +102,9 @@ class ActivitySeeder extends Seeder
                 'end_at' => '2026-10-02 15:00:00',
             ],
 
-            // -------------------------------------------------------------
-            // PUBLISHED - semua WAJIB lengkap BR-05, karena guard publish()
-            // menolak kegiatan yang lokasi, kapasitas, atau waktu belum valid.
-            // -------------------------------------------------------------
+            // ---------- PUBLISHED (wajib lengkap agar lolos guard publish) ----------
 
-            // capacity kecil (3): fixture Independent Challenge IC-04,
-            // yaitu pendaftaran ditolak saat kapasitas sudah penuh.
+            // Kapasitas kecil, untuk uji pendaftaran saat penuh.
             [
                 'code' => 'ACT-009',
                 'category_id' => $categoryId['study-club'],
@@ -133,8 +118,7 @@ class ActivitySeeder extends Seeder
                 'end_at' => '2026-10-06 16:00:00',
             ],
 
-            // start_at di masa lampau: fixture Independent Challenge IC-02,
-            // yaitu pendaftaran ditolak karena kegiatan sudah lewat.
+            // Sudah dimulai, untuk uji pendaftaran yang ditolak.
             [
                 'code' => 'ACT-010',
                 'category_id' => $categoryId['lomba'],
@@ -200,10 +184,7 @@ class ActivitySeeder extends Seeder
                 'end_at' => '2026-10-27 16:00:00',
             ],
 
-            // -------------------------------------------------------------
-            // COMPLETED - tidak ada transisi keluar (BR-07).
-            // -------------------------------------------------------------
-
+            // ---------- COMPLETED ----------
             [
                 'code' => 'ACT-013',
                 'category_id' => $categoryId['workshop'],

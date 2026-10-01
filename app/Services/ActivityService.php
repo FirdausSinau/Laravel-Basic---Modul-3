@@ -13,10 +13,7 @@ class ActivityService
         // Status awal selalu Draft, tidak pernah diambil dari input request.
         $data['status'] = 'Draft';
 
-        if ($poster = $data['poster'] ?? null) {
-            $data['poster_path'] = $poster->store('posters', 'public');
-        }
-        unset($data['poster']);
+        $this->storePoster($data);
 
         return Activity::create($data);
     }
@@ -29,10 +26,7 @@ class ActivityService
 
         $posterLama = $activity->poster_path;
 
-        if ($poster = $data['poster'] ?? null) {
-            $data['poster_path'] = $poster->store('posters', 'public');
-        }
-        unset($data['poster']);
+        $this->storePoster($data);
 
         $activity->update($data);
 
@@ -43,6 +37,21 @@ class ActivityService
         }
 
         return $activity;
+    }
+
+    /**
+     * Menyimpan poster yang diunggah dan mengisi poster_path pada data.
+     *
+     * Kunci 'poster' selalu dilepas dari data karena berisi objek berkas,
+     * bukan kolom database.
+     */
+    private function storePoster(array &$data): void
+    {
+        if ($poster = $data['poster'] ?? null) {
+            $data['poster_path'] = $poster->store('posters', 'public');
+        }
+
+        unset($data['poster']);
     }
 
     /**

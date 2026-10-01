@@ -11,6 +11,9 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        // Urutan wajib: kategori dibuat lebih dulu karena activities.category_id
+        // mereferensikan categories.id (foreign key BR-01).
+        $this->call(CategorySeeder::class);
         $this->call(ActivitySeeder::class);
     }
 }
